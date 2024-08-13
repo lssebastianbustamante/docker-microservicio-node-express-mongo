@@ -1,0 +1,67 @@
+services:
+
+  # APi Products
+  toursapi: 
+    container_name: toursapi
+    restart: always
+    build: 
+      context: ./microservices/api-tour/
+      dockerfile: Dockerfile
+    external_links:
+      - mongo
+    environment:
+      - MONGO_HOST=mongotours
+      - MONGO_DB=tours
+      - MONGO_PORT=27017
+
+  # API Search
+  searchapi: 
+    container_name: searchapi
+    restart: always
+    build: 
+      context: ./microservices/api-search/
+      dockerfile: Dockerfile
+    external_links:
+      - mongo
+    environment:
+      - MONGO_HOST=mongosearch
+      - MONGO_DB=dbsearch
+      - MONGO_PORT=27017
+  
+  # Data Base Products
+  mongotours:
+    container_name: db-mongotours
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_DATABASE: dbtours
+    ports:
+      - '27018:27017'
+    volumes:
+        - mongo-tours-vl:/data:/data/db 
+    command: mongod --quiet --logpath /dev/null 
+
+  # Data Base Search 
+  mongosearch:
+    container_name: db-mongosearch
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_DATABASE: dbsearch
+    volumes:
+        - mongo-search-vl:/data:/data/db 
+    ports:
+      - '27017:27017'
+    command: mongod --quiet --logpath /dev/null 
+  lb:
+    image: haproxy
+    ports:
+      - "80:80"
+    volumes:
+      - ./microservices/haproxy:/usr/local/etc/haproxy    
+  
+
+# Volumes
+volumes:
+    mongo-search-vl:
+    mongo-tours-vl:

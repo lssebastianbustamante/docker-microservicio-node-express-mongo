@@ -42,7 +42,7 @@ Body Request
 ## API-SEARCH
 
 ```
-Endpoint Tour:
+Endpoint Search:
 
 GET: http://localhost/api/v1/search
 GET: http://localhost/api/v1/search/:id

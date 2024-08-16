@@ -6,5 +6,5 @@
         "sourceMap": true,
         "noImplicitAny": true,
     },
-    "include": ["src/**/*"]
+    "include": ["src/**/*", "../api-tour/src/nats/suscribe.ts"]
 }

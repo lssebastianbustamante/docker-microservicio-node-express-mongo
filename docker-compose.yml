@@ -1,4 +1,11 @@
 services:
+  nats: 
+    image: nats:latest
+    ports:
+      - "4222:4222"
+    command: "--server_name tours -js -sd /data --cluster_name nats --cluster nats://0.0.0.0:6222 --http_port 8222 "
+    volumes:
+      - "./nats-jetstream:/data"
 
   # APi Products
   toursapi: 
@@ -13,6 +20,11 @@ services:
       - MONGO_HOST=mongotours
       - MONGO_DB=tours
       - MONGO_PORT=27017
+      - LOCAL_PORT=8081
+      - NATS_HOST=demo.nats.io
+      - NATS_PORT=4222
+    depends_on:
+      - nats
 
   # API Search
   searchapi: 
@@ -27,6 +39,12 @@ services:
       - MONGO_HOST=mongosearch
       - MONGO_DB=dbsearch
       - MONGO_PORT=27017
+      - LOCAL_PORT=8082
+      - NATS_HOST=demo.nats.io
+      - NATS_PORT=4222
+    depends_on:
+      - nats
+    
   
   # Data Base Products
   mongotours:
@@ -39,7 +57,8 @@ services:
       - '27018:27017'
     volumes:
         - mongo-tours-vl:/data:/data/db 
-    command: mongod --quiet --logpath /dev/null 
+    command: mongod --quiet --logpath /dev/null
+
 
   # Data Base Search 
   mongosearch:
@@ -52,16 +71,18 @@ services:
         - mongo-search-vl:/data:/data/db 
     ports:
       - '27017:27017'
-    command: mongod --quiet --logpath /dev/null 
+    command: mongod --quiet --logpath /dev/null
+    depends_on:
+      - nats
+
   lb:
     image: haproxy
     ports:
       - "80:80"
     volumes:
-      - ./microservices/haproxy:/usr/local/etc/haproxy    
-  
+      - ./microservices/haproxy:/usr/local/etc/haproxy
 
 # Volumes
 volumes:
-    mongo-search-vl:
-    mongo-tours-vl:
+  mongo-search-vl:
+  mongo-tours-vl:

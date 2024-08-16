@@ -1,12 +1,4 @@
 services:
-  nats: 
-    image: nats:latest
-    ports:
-      - "4222:4222"
-    command: "--server_name tours -js -sd /data --cluster_name nats --cluster nats://0.0.0.0:6222 --http_port 8222 "
-    volumes:
-      - "./nats-jetstream:/data"
-
   # APi Products
   toursapi: 
     container_name: toursapi
@@ -81,6 +73,13 @@ services:
       - "80:80"
     volumes:
       - ./microservices/haproxy:/usr/local/etc/haproxy
+  nats: 
+    image: nats:latest
+    ports:
+      - "4222:4222"
+    command: "--server_name tours -js -sd /data --cluster_name nats --cluster nats://0.0.0.0:6222 --http_port 8222 "
+    volumes:
+      - "./microservices/nats-jetstream:/data"
 
 # Volumes
 volumes:

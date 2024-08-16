@@ -7,7 +7,7 @@ export const subscribeMessage = async () => {
   });
   const jsc = JSONCodec();
 
-  const subscription = nc.subscribe("tour.id");
+  const subscription = nc.subscribe("tour.add");
   (async (sub) => {
     console.log(`listening for ${sub.getSubject()} requests...`);
     for await (const m of sub) {

@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { TourModel } from "../models/tourModel";
 import asyncHandler from "../utils/catchAsync";
-import { connect, StringCodec } from "nats";
+import { AppError } from "../utils/appError";
 
 export const getAllTours = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -16,15 +16,20 @@ export const getAllTours = asyncHandler(
   }
 );
 
-export const createTour = asyncHandler(
+export const getTourId = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const tour = await TourModel.create(req.body);
+    const { id } = req.params;
+    const tourFound = await TourModel.findById(id);
+
+    if (!tourFound) {
+      return next(new AppError('No tour found with that ID', 404));
+    }
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: {
-        tour,
-      },
-    });
+        tour: tourFound,
+      }
+    })
   }
 );

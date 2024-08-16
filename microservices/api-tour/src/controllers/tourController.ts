@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { TourModel } from "../models/tourModel";
 import asyncHandler from "../utils/catchAsync";
-import { connect, JSONCodec, StringCodec } from "nats";
+import { connect, JSONCodec } from "nats";
 
 export const getAllTours = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -26,7 +26,7 @@ export const createTour = asyncHandler(
 
     const jsc = JSONCodec();
 
-    await nc.publish("tour.id", jsc.encode(tour));
+    await nc.publish("tour.add", jsc.encode(tour));
 
     return res.status(200).json({
       status: "success",
